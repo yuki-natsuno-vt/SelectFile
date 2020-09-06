@@ -5,8 +5,11 @@
 #include<iostream>
 #include<fstream>
 
-void writeFilePath(const char* path) {
-	std::ofstream outputfile("temp_path");
+void writeFilePath(const char* workDir, const char* path) {
+	std::string tempPathFile = workDir;
+	tempPathFile += "/temp_path";
+
+	std::ofstream outputfile(tempPathFile);
 	outputfile << path;
 	outputfile.close();
 }
@@ -14,8 +17,11 @@ void writeFilePath(const char* path) {
 bool getOpenFileName(char* title, char* filter, char* defExt) {
 	OPENFILENAME ofn = { 0 };
 	constexpr int SIZE = MAX_PATH * 4;
-	TCHAR filePath[SIZE] = { 0 };
 
+	TCHAR workDir[SIZE] = { 0 };
+	GetCurrentDirectory(SIZE, workDir);
+
+	TCHAR filePath[SIZE] = { 0 };
 	ofn.lStructSize = sizeof(OPENFILENAME);
 	ofn.lpstrFilter = filter;
 	ofn.nFilterIndex = 1;
@@ -27,7 +33,7 @@ bool getOpenFileName(char* title, char* filter, char* defExt) {
 	ofn.Flags = OFN_FILEMUSTEXIST;
 	bool result = GetOpenFileName(&ofn);
 
-	writeFilePath(filePath);
+	writeFilePath(workDir, filePath);
 	return result;
 }
 
@@ -35,8 +41,11 @@ bool getOpenFileName(char* title, char* filter, char* defExt) {
 bool getSaveFileName(char* title, char* filter, char* defExt) {
 	OPENFILENAME ofn = { 0 };
 	constexpr int SIZE = MAX_PATH * 4;
-	TCHAR filePath[SIZE] = { 0 };
 
+	TCHAR workDir[SIZE] = { 0 };
+	GetCurrentDirectory(SIZE, workDir);
+
+	TCHAR filePath[SIZE] = { 0 };
 	ofn.lStructSize = sizeof(OPENFILENAME);
 	ofn.lpstrFilter = filter;
 	ofn.nFilterIndex = 1;
@@ -48,7 +57,7 @@ bool getSaveFileName(char* title, char* filter, char* defExt) {
 	ofn.Flags = OFN_EXPLORER;
 	bool result = GetSaveFileName(&ofn);
 
-	writeFilePath(filePath);
+	writeFilePath(workDir, filePath);
 	return result;
 }
 
